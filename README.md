@@ -104,8 +104,3 @@ request.
 
 This project is licensed under the MIT License.
 
----
-
-*Note: This README is based on the available project structure and common practices for BFF implementations. For
-detailed information on each module's functionality and configurations, please refer to the respective module
-documentation or source code.*
