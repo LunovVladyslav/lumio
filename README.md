@@ -10,11 +10,11 @@
 </a>
 
 <a href="https://www.docker.com/">
-     <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Docker_%28container_engine%29_logo.svg" alt="Docker" width="100"/>
+     <img src="./assets/Docker.svg" alt="Docker" width="100"/>
 </a>
 
 <a href="https://spring.io/">
-     <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Spring_Framework_Logo_2018.svg" alt="Spring" width="100" height="80"/>
+     <img src="./assets/Spring.svg" alt="Spring" width="100" height="80"/>
 </a>
 
 <a href="https://redis.io/">
@@ -27,7 +27,7 @@
 
 
 <a href="https://www.postgresql.org/">
-   <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg" alt="PostgreSQL" width="80" height="80"/>
+   <img src="./assets/PostgresSQL.svg" alt="PostgreSQL" width="80" height="80"/>
 </a>
 
   
