@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -21,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
+		private static final String BEARER = "Bearer %s";
 		private final RestClient restClient = RestClient.create();
 
 		private final UrlsUtil urlsUtil;
@@ -33,12 +36,47 @@ public class AuthServiceImpl implements AuthService {
 		@Value("${admin.password}")
 		private String adminPassword;
 
+		@Override
+		public ResponseEntity<Void> deleteUser(LogoutDTO logoutDTO, String userId) {
+				this.logout(logoutDTO);
+
+				var tokenResponse = this.loginAsAdmin();
+				return restClient.delete()
+								.uri(urlsUtil.deleteUserUrl(userId))
+								.header(HttpHeaders.AUTHORIZATION, BEARER.formatted(tokenResponse.accessToken()))
+								.retrieve()
+								.toBodilessEntity();
+		}
+
+		@Override
+		public ResponseEntity<Void> logout(LogoutDTO logoutDTO) {
+				return restClient.post()
+								.uri(urlsUtil.getLogoutUrl())
+								.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+								.header(HttpHeaders.AUTHORIZATION, BEARER.formatted(logoutDTO.accessToken()))
+								.body("client_id=%s>&refresh_token=%s".formatted(clientId, logoutDTO.refreshToken()))
+								.retrieve()
+								.toBodilessEntity();
+		}
+
+		@Override
+		public TokenResponseDTO refreshToken(String refreshToken) {
+				ResponseEntity<TokenResponseDTO> response = restClient.post()
+								.uri(urlsUtil.getTokenUrl())
+								.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+								.body("client_id=%s&refresh_token=%s&grant_type=refresh_token".formatted(clientId, refreshToken))
+								.retrieve()
+								.toEntity(TokenResponseDTO.class);
+
+				return response.getBody();
+		}
+
 		// TODO: add catch exceptions functionality
 		@Override
 		public TokenResponseDTO login(LoginRequestDTO loginRequestDTO) {
 				ResponseEntity<TokenResponseDTO> response = restClient.post()
 								.uri(urlsUtil.getTokenUrl())
-								.header("Content-Type", "application/x-www-form-urlencoded")
+								.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 								.body("client_id=%s&username=%s&password=%s&grant_type=password"
 												.formatted(
 																clientId, loginRequestDTO.username(), loginRequestDTO.password()
@@ -73,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
 
 				restClient.post()
 								.uri(urlsUtil.getUsersUrl())
-								.header("Authorization", "Bearer %s".formatted(tokenResponse.access_token()))
+								.header(HttpHeaders.AUTHORIZATION, BEARER.formatted(tokenResponse.accessToken()))
 								.body(userRequest)
 								.retrieve()
 								.onStatus(err -> {
@@ -93,13 +131,13 @@ public class AuthServiceImpl implements AuthService {
 						return registrationFailed(errMsg.get());
 				}
 
-				return findUserByEmail(registrationRequestDTO.email(), tokenResponse.access_token());
+				return findUserByEmail(registrationRequestDTO.email(), tokenResponse.accessToken());
 		}
 
 		public UserRepresentationDTO findUserByEmail(String email, String accessToken) {
 				var userList = restClient.get()
 								.uri("%s?email=%s".formatted(urlsUtil.getUsersUrl(), email))
-								.header("Authorization", "Bearer %s".formatted(accessToken))
+								.header(HttpHeaders.AUTHORIZATION, BEARER.formatted(accessToken))
 								.retrieve()
 								.body(new ParameterizedTypeReference<List<UserRepresentationDTO>>() {});
 
@@ -108,22 +146,10 @@ public class AuthServiceImpl implements AuthService {
 						return null;
 				}
 
-				UserRepresentationDTO user = userList.get(0);
+				UserRepresentationDTO user = userList.getFirst();
 				log.info(user.toString());
 
 				return user;
-//								.toEntity(List.class)
-//								.getBody();
-//
-//				AtomicReference<UserRepresentationDTO> user = new AtomicReference<>();
-//
-//				userList.forEach(res -> {
-//						user.set((UserRepresentationDTO) res);
-//				});
-//
-//				log.info(user.get().toString());
-//
-//				return user.get();
 		}
 
 		private TokenResponseDTO loginAsAdmin() {

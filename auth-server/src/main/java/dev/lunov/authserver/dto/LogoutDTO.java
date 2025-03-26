@@ -4,12 +4,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record UserRepresentationDTO(
-				String id,
-				String username,
-				String firstName,
-				String lastName,
-				String email,
-				ErrorDTO error
+public record LogoutDTO(
+				String accessToken,
+				String refreshToken
 ) {
 }

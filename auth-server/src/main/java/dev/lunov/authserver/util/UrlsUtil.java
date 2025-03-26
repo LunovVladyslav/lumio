@@ -20,4 +20,12 @@ public class UrlsUtil {
 		public String getUsersUrl() {
 				return "%s/admin/realms/%s/users".formatted(host, realm);
 		}
+
+		public String getLogoutUrl() {
+				return "%s/realms/%s/protocol/openid-connect/logout".formatted(host, realm);
+		}
+
+		public String deleteUserUrl(String userId) {
+				return "%s/admin/realms/%s/users/%s".formatted(host, realm, userId);
+		}
 }
