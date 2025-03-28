@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
 		private String adminPassword;
 
 		@Override
-		public ResponseEntity<Void> deleteUser(String userId, LogoutDTO logoutDTO) {
+		public ResponseEntity<Void> deleteUser(String userId) {
 				this.logout(userId);
 				var tokenResponse = this.loginAsAdmin();
 

@@ -9,5 +9,5 @@ public interface AuthService {
 		UserRepresentationDTO register(RegistrationRequestDTO registrationRequestDTO);
 		TokenResponseDTO refreshToken(String token);
 		ResponseEntity<Void> logout(String userId);
-		ResponseEntity<Void> deleteUser(String userId, LogoutDTO logoutDTO);
+		ResponseEntity<Void> deleteUser(String userId);
 }

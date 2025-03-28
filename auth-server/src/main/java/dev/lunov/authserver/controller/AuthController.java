@@ -1,6 +1,5 @@
 package dev.lunov.authserver.controller;
 
-import dev.lunov.authserver.dto.LogoutDTO;
 import dev.lunov.authserver.dto.RegistrationRequestDTO;
 import dev.lunov.authserver.dto.TokenResponseDTO;
 import dev.lunov.authserver.dto.UserRepresentationDTO;
@@ -40,7 +39,7 @@ public class AuthController {
 		}
 
 		@DeleteMapping("/delete/{userId}")
-		public ResponseEntity<Void> delete(@PathVariable String userId, @RequestBody LogoutDTO logoutDTO) {
-				return authService.deleteUser(userId, logoutDTO);
+		public ResponseEntity<Void> delete(@PathVariable String userId) {
+				return authService.deleteUser(userId);
 		}
 }
