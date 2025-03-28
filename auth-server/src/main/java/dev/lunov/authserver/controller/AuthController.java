@@ -7,6 +7,7 @@ import dev.lunov.authserver.dto.UserRepresentationDTO;
 import dev.lunov.authserver.service.AuthService;
 import dev.lunov.authserver.util.StringParserUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,22 +25,22 @@ public class AuthController {
 		}
 
 		@PostMapping("/login")
-		public TokenResponseDTO login(@RequestHeader("Authorization") String authorizationHeader) {
+		public TokenResponseDTO login(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
 				return authService.login(stringParser.getUserCredentials(authorizationHeader));
 		}
 
 		@PostMapping("/refresh")
-		public TokenResponseDTO refresh(@RequestHeader("Authorization") String authorizationHeader) {
-				return authService.refreshToken(stringParser.getToken(authorizationHeader));
+		public TokenResponseDTO refresh(@RequestHeader(HttpHeaders.AUTHORIZATION) String refreshToken) {
+				return authService.refreshToken(stringParser.getToken(refreshToken));
 		}
 
-		@PostMapping("/logout")
-		public ResponseEntity<Void> logout(@RequestBody LogoutDTO logoutDTO) {
-				return authService.logout(logoutDTO);
+		@PostMapping("/logout/{userId}")
+		public ResponseEntity<Void> logout(@PathVariable String userId) {
+				return authService.logout(userId);
 		}
 
 		@DeleteMapping("/delete/{userId}")
-		public ResponseEntity<Void> delete(@RequestBody LogoutDTO logoutDTO, @PathVariable String userId) {
-				return authService.deleteUser(logoutDTO, userId);
+		public ResponseEntity<Void> delete(@PathVariable String userId, @RequestBody LogoutDTO logoutDTO) {
+				return authService.deleteUser(userId, logoutDTO);
 		}
 }

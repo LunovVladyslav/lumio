@@ -8,6 +8,6 @@ public interface AuthService {
 		TokenResponseDTO login(LoginRequestDTO loginRequestDTO);
 		UserRepresentationDTO register(RegistrationRequestDTO registrationRequestDTO);
 		TokenResponseDTO refreshToken(String token);
-		ResponseEntity<Void> logout(LogoutDTO logoutDTO);
-		ResponseEntity<Void> deleteUser(LogoutDTO logoutDTO , String userId);
+		ResponseEntity<Void> logout(String userId);
+		ResponseEntity<Void> deleteUser(String userId, LogoutDTO logoutDTO);
 }

@@ -1,6 +1,7 @@
 package dev.lunov.authserver.util;
 
 import dev.lunov.authserver.dto.LoginRequestDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+@Slf4j
 @Component
 public class StringParserUtil {
 
@@ -32,6 +34,11 @@ public class StringParserUtil {
 		}
 
 		public String getToken(String authorizationHeader) {
-				return authorizationHeader.substring("Bearer".length()).trim();
+				if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+						throw new IllegalArgumentException("Invalid Authorization header");
+				}
+				var token = authorizationHeader.substring("Bearer".length()).trim();
+				log.debug("token: {}", token);
+				return token;
 		}
 }
