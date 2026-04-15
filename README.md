@@ -1,5 +1,4 @@
-# BFF Platform
-
+#Lumio — AI-Powered BFF Platform
 Multi-module Java backend implementing the Backend for Frontend pattern.
 
 ## Modules
